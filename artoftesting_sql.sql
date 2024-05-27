@@ -74,3 +74,38 @@ For this question, we can create an SQL query using like operator with ‘_’ a
 SELECT FullName
 FROM EmployeeDetails
 WHERE FullName LIKE ‘__hn%’;
+
+
+UNION: This operator combines the results of the two SELECT statements, removing any duplicate EmpIds.
+11. Write an SQL query to fetch all the EmpIds which are present in either of the tables – ‘EmployeeDetails’ and ‘EmployeeSalary’.
+SELECT empid FROM employeedetails
+UNION
+SELECT empid FROM employeesalary;
+
+INTERSECT: to get common elements
+12. Write an SQL query to fetch common records between two tables.
+SELECT empid FROM employeedetails INTERSECT  SELECT EmpId FROM employeesalary;
+SUBQUERY: SELECT * FROM employeedetails where empid IN ( SELECT EmpId FROM employeesalary);
+
+13. Write an SQL query to fetch records that are present in one table but not in another table.
+SELECT * FROM employeedetails where empid NOT  IN ( SELECT EmpId FROM employeesalary);
+SELECT d.*
+FROM employeedetails d
+LEFT JOIN employeesalary s ON d.empid = s.empid
+WHERE s.empid IS NULL;
+
+14.  Write an SQL query to fetch the EmpIds that are present in both the tables –  ‘EmployeeDetails’ and ‘EmployeeSalary.
+SELECT EmpId FROM
+EmployeeDetails
+where EmpId IN
+(SELECT EmpId FROM EmployeeSalary);
+
+SELECT d.empid
+FROM employeedetails d
+INNER JOIN employeesalary s ON d.empid = s.empid;
+
+15. Write an SQL query to fetch the EmpIds that are present in EmployeeDetails but not in EmployeeSalary.
+SELECT EmpId FROM
+EmployeeDetails
+where EmpId NOT IN
+(SELECT EmpId FROM EmployeeSalary);
