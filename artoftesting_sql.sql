@@ -109,3 +109,76 @@ SELECT EmpId FROM
 EmployeeDetails
 where EmpId NOT IN
 (SELECT EmpId FROM EmployeeSalary);
+
+
+16. Write an SQL query to fetch the employee’s full names and replace the space with ‘-’.
+select REPLACE(fullname,' ','-') from employeedetails;
+
+17. Write an SQL query to fetch the position of a given character(s) in a field.
+SELECT INSTR(FullName, 'Snow')
+FROM EmployeeDetails;
+
+--- CONCAT_WS(separator, string1, string2, ...)
+18. Write an SQL query to display both the EmpId and ManagerId together.
+select CONCAT_WS('-',empid, managerid) from employeedetails;
+
+19. Write a query to fetch only the first name(string before space) from the FullName column of the EmployeeDetails table.
+
+
+20. Write an SQL query to uppercase the name of the employee and lowercase the city values.
+select upper(fullname), lower(city) from employeedetails;
+
+21. Write an SQL query to find the count of the total occurrences of a particular character – ‘n’ in the FullName field.
+
+22. Write an SQL query to update the employee names by removing leading and trailing spaces.
+UPDATE EmployeeDetails
+SET FullName = LTRIM(RTRIM(FullName));
+
+23. Fetch all the employees who are not working on any project.
+SELECT EmpId
+FROM EmployeeSalary
+WHERE Project IS NULL;
+
+
+24. Write an SQL query to fetch employee names having a salary greater than or equal to 5000 and less than or equal to 10000.
+select fullname from employeedetails where empid in (SELECT EmpId  FROM employeesalary where
+ salary between 10000 and 120000);
+
+ 25. Write an SQL query to find the current date-time.
+ select NOW();
+
+ 26. Write an SQL query to fetch all the Employee details from the EmployeeDetails table who joined in the Year 2020.
+ SELECT * FROM EmployeeDetails
+WHERE DateOfJoining BETWEEN '2020/01/01'
+AND '2020/12/31';
+
+select * from employeedetails where YEAR(dateofjoining) = '2020';
+
+27.Write an SQL query to fetch all employee records from the EmployeeDetails table who have a salary record in the EmployeeSalary table.
+select * from employeedetails where empid IN(select empid from employeesalary where salary i
+s not
+
+28. Write an SQL query to fetch the project-wise count of employees sorted by project’s count in descending order.
+select project,  count(*) as count_emp from employeesalary group by project order by count_emp DESC;
+
+29.Write a query to fetch employee names and salary records. Display the employee details even if the salary record is not present for the employee.
+select d.fullname, s.salary from employeedetails d LEFT JOIN employeesalary s ON d.empid=s.e
+mpid;
+select d.fullname, s.salary from employeedetails d JOIN employeesalary s ON d.empid=s.empid;
+
+30. Write an SQL query to join 3 tables.
+SELECT column1, column2
+FROM TableA
+JOIN TableB ON TableA.Column3 = TableB.Column3
+JOIN TableC ON TableA.Column4 = TableC.Column4;
+
+41. Consider a SalesData with columns SaleID, ProductID, RegionID, SaleAmount. Write a query to find the total sales amount for each product in each region.
+The below query sums up SaleAmount for each combination of ProductID and RegionID, giving an insight into the total sales per product per region.
+
+SELECT ProductID, RegionID, SUM(SaleAmount) AS TotalSales
+FROM SalesData
+GROUP BY ProductID, RegionID;
+
+42. Write a query to find employees who earn more than their managers.
+
+
