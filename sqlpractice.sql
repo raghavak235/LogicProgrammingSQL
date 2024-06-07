@@ -1,10 +1,15 @@
+
+
+Ques:Invalid Tweets
+
+
 Write a solution to find invalid tweets. A tweet is considered invalid if it meets any of the following criteria:
 
 It exceeds 140 characters in length.
 It has more than 3 mentions.
 It includes more than 3 hashtags.
 Return the result table ordered by tweet_id in ascending order.
-
+Sol:
 SELECT tweet_id, tweet_text
 FROM tweets
 WHERE
@@ -12,6 +17,8 @@ WHERE
     (LENGTH(tweet_text) - LENGTH(REPLACE(tweet_text, '@', ''))) > 3 OR
     (LENGTH(tweet_text) - LENGTH(REPLACE(tweet_text, '#', ''))) > 3
 ORDER BY tweet_id ASC;
+
+
 REPLACE(tweet_text, '@', ''): This function removes all occurrences of the @ character from the tweet_text.
 LENGTH(REPLACE(tweet_text, '@', '')): This calculates the length of the tweet text after all @ characters have been removed.
 LENGTH(tweet_text) - LENGTH(REPLACE(tweet_text, '@', '')): This calculates the difference in length before and after removing the @ characters. This difference represents the number of @ characters (mentions) in the tweet.
@@ -21,15 +28,11 @@ LENGTH(REPLACE(tweet_text, '#', '')): This calculates the length of the tweet te
 LENGTH(tweet_text) - LENGTH(REPLACE(tweet_text, '#', '')): This calculates the difference in length before and after removing the # characters. This difference represents the number of # characters (hashtags) in the tweet.
 > 3: This condition checks if there are more than 3 hashtags.
 
+================================================================================================================================================================================================================================
 
 
-Students With Invalid Departments
-Solved
-Easy
-Topics
-Companies
-SQL Schema
-Pandas Schema
+Ques: Students With Invalid Departments
+
 Table: Departments
 
 +---------------+---------+
@@ -67,154 +70,64 @@ where
 department_id not in
 (select id from departments);
 
+
 using Joins:
 select s.id, s.name from students s
-left joinCertainly! Let's dive deeper into the logic of the query that finds students enrolled in departments that no longer exist using the LEFT JOIN method.
-
-Query
-sql
-Copy code
-SELECT s.id, s.name
-FROM Students s
-LEFT JOIN Departments d ON s.department_id = d.id
-WHERE d.id IS NULL;
-Explanation
-1. LEFT JOIN
-Syntax: LEFT JOIN is used to combine rows from two tables, based on a related column between them. A LEFT JOIN returns all rows from the left table (Students), and the matched rows from the right table (Departments). If there is no match, the result is NULL on the side of the right table.
-Usage in Query: LEFT JOIN Departments d ON s.department_id = d.id
-2. Filtering Non-Existent Departments
-Condition: WHERE d.id IS NULL
-Explanation: After the LEFT JOIN, rows from the Students table that do not have a corresponding id in the Departments table will have NULL in the Departments columns. The WHERE d.id IS NULL condition filters these rows, identifying students whose department_id does not match any existing id in the Departments table.
-Detailed Steps with Example
-Let's go through an example step by step.
-
-Tables
-Departments Table:
-
-id	name
-1	Engineering
-2	Arts
-3	Science
-Students Table:
-
-id	name	department_id
-1	Alice	1
-2	Bob	2
-3	Charlie	4
-4	David	NULL
-5	Eve	3
-Step-by-Step Execution
-Perform LEFT JOIN:
-
-Join the Students table with the Departments table on department_id = id.
-s.id	s.name	s.department_id	d.id	d.name
-1	Alice	1	1	Engineering
-2	Bob	2	2	Arts
-3	Charlie	4	NULL	NULL
-4	David	NULL	NULL	NULL
-5	Eve	3	3	Science
-Notice how Charlie and David have NULL in the d.id and d.name columns because there is no matching id in the Departments table for department_id 4, and David has a NULL department_id.
-Filter Rows with d.id IS NULL:
-
-Apply the WHERE d.id IS NULL condition to keep only rows where there is no corresponding department.
-s.id	s.name	s.department_id	d.id	d.name
-3	Charlie	4	NULL	NULL
-4	David	NULL	NULL	NULL
-Select Required Columns:
-
-Select the s.id and s.name columns for the final result.
-id	name
-3	Charlie
-4	David
-Summary
-LEFT JOIN ensures all students are included in the result, regardless of whether they are enrolled in an existing department.
-WHERE d.id IS NULL filters out students whose departments do not exist (i.e., departments that are not present in the Departments table).
-The final result includes only the students who are enrolled in non-existent departments, identified by their IDs and names.
+left join
 departments d
 on s.department_id = d.id
 where d.id is NULL;
 
+ChatGPT Explanation:
 
-SELECT s.id, s.name
-FROM Students s
-INNER JOIN Departments d ON s.department_id != d.id;
+Sample Data
 
-2/2
+Departments Table
+id	name
+1	Computer Sci
+2	Mathematics
+3	Physics
 
-ChatGPT
-Using an INNER JOIN with the condition s.department_id != d.id would not achieve the desired result and would lead to incorrect results. Let's analyze why this is the case.
+Students Table
+id	name	department_id
+1	Alice	    1
+2	Bob	        2
+3	Charlie	    4
+4	David	    3
+5	Eve	        5
 
-INNER JOIN with s.department_id != d.id
-When you write an INNER JOIN with the condition s.department_id != d.id, the query is attempting to match rows where the department_id in the Students table is not equal to any id in the Departments table. This does not make logical sense for identifying non-existent departments because it will result in a Cartesian product minus the matching rows, leading to irrelevant and excessive results.
+Step-by-Step Execution of the Query
 
-Query
-sql
-Copy code
-SELECT s.id, s.name
-FROM Students s
-INNER JOIN Departments d ON s.department_id != d.id;
-Why It Doesn't Work
-Unintended Cartesian Product: This condition s.department_id != d.id will generate many unintended combinations, as it will match every student with every department that does not match their department_id. This results in a large number of irrelevant rows.
-Irrelevant Data: The result will include students multiple times with various departments, leading to an incorrect and inflated result set.
-Example with INNER JOIN and != Condition
-Given the same data:
+LEFT JOIN:
+We join the Students table with the Departments table using a left join. The result of this join includes all rows from the Students table and the matching rows from the Departments table.
+If there is no match, the result will contain NULL for the columns from the Departments table.
 
-Departments Table:
+s.id	s.name	s.department_id	d.id	d.name
+1	Alice	1	1	Computer Sci
+2	Bob	    2	2	Mathematics
+3	Charlie	4	NULL	NULL
+4	David	3	3	Physics
+5	Eve 	5	NULL	NULL
+
+
+WHERE d.id IS NULL:
+We filter the result to include only the rows where d.id is NULL, which means that there was no matching department for that student.
+
+s.id	s.name	s.department_id	d.id	d.name
+3	    Charlie	    4	        NULL	NULL
+5	    Eve	        5	        NULL	NULL
+
+
+SELECT s.id, s.name:
+We select only the id and name columns from the Students table for the final result.
 
 id	name
-1	Engineering
-2	Arts
-3	Science
-Students Table:
-
-id	name	department_id
-1	Alice	1
-2	Bob	2
-3	Charlie	4
-4	David	NULL
-5	Eve	3
-Using the query:
-
-sql
-Copy code
-SELECT s.id, s.name
-FROM Students s
-INNER JOIN Departments d ON s.department_id != d.id;
-This will produce a result set where each student is matched with every department that is not their own:
-
-s.id	s.name
-1	Alice
-1	Alice
-2	Bob
-2	Bob
 3	Charlie
-3	Charlie
-3	Charlie
-4	David
-4	David
-4	David
 5	Eve
-5	Eve
-Correct Approach: LEFT JOIN with WHERE d.id IS NULL
-The correct approach remains using a LEFT JOIN with a WHERE clause to filter out the rows where there is no matching department. This accurately captures students whose department_id does not exist in the Departments table.
 
-Correct Query
-sql
-Copy code
-SELECT s.id, s.name
-FROM Students s
-LEFT JOIN Departments d ON s.department_id = d.id
-WHERE d.id IS NULL;
-Explanation of Correct Query
-LEFT JOIN: Ensures that all students are included in the result, regardless of whether there is a matching row in the Departments table.
-WHERE d.id IS NULL: Filters the result to include only rows where there is no matching department, identifying students whose department_id does not exist in the Departments table.
-Summary
-Using INNER JOIN with s.department_id != d.id generates irrelevant results and does not solve the problem.
-The correct approach is to use LEFT JOIN and filter with WHERE d.id IS NULL to accurately find students enrolled in departments that no longer exist.
-This method ensures that the result includes only the students who do not have a matching department in the Departments table, providing the correct answer to the problem.
+===============================================================================================================================================================================================================================
 
-
-3.
+Ques: Find the Team Size
 Table: Employee
 
 +---------------+---------+
@@ -274,6 +187,10 @@ with CTE as(
 )
 (select e.employee_id, c.team_size from employee e join cte c
 on e.team_id = c.team_id);
+================================================================================================================================================================================================================================
+
+
+Ques:Duplicate Emails
 
 Table: Person
 
@@ -318,6 +235,8 @@ Sol:
 with CTE as(
 select email, count(*) as count from person group by email having count >1)
 (select email from CTE)
+
+================================================================================================================================================================================================================================
 
 Table: Customers
 
@@ -383,6 +302,10 @@ Sol:
 select name as customers from customers where id not in
 (select customerId from orders)
 
+================================================================================================================================================================================================================================
+
+Ques: Rising Temperature
+
 Table: Weather
 
 +---------------+---------+
@@ -428,6 +351,63 @@ Explanation:
 In 2015-01-02, the temperature was higher than the previous day (10 -> 25).
 In 2015-01-04, the temperature was higher than the previous day (20 -> 30).
 
+
+
+Self-Join Explained by ChatGPT.:
+
+
+The query uses a self-join on the Weather table. This means that we are joining the table with itself, but treating one instance as the current day's data (w1) and the other instance as the previous day's data (w2).
+
+Join Condition
+The condition DATEDIFF(w1.recordDate, w2.recordDate) = 1 ensures that we only join rows where the recordDate of w1 is exactly one day after the recordDate of w2.
+
+How Pairs Are Generated
+Let's go through the table row by row to see how pairs are formed.
+
+First Row (id = 1, recordDate = 2015-01-01):
+
+w1 is this row.
+No rows in w2 have recordDate = 2015-01-01 + 1 day = 2015-01-02, so no pairs are formed.
+Second Row (id = 2, recordDate = 2015-01-02):
+
+w1 is this row.
+We look for rows in w2 where recordDate = 2015-01-02 - 1 day = 2015-01-01.
+We find a match: (id = 1, recordDate = 2015-01-01, temperature = 10).
+Pair formed: (w1.id = 2, w1.recordDate = 2015-01-02, w1.temperature = 25, w2.id = 1, w2.recordDate = 2015-01-01, w2.temperature = 10).
+Third Row (id = 3, recordDate = 2015-01-03):
+
+w1 is this row.
+We look for rows in w2 where recordDate = 2015-01-03 - 1 day = 2015-01-02.
+We find a match: (id = 2, recordDate = 2015-01-02, temperature = 25).
+Pair formed: (w1.id = 3, w1.recordDate = 2015-01-03, w1.temperature = 20, w2.id = 2, w2.recordDate = 2015-01-02, w2.temperature = 25).
+Fourth Row (id = 4, recordDate = 2015-01-04):
+
+w1 is this row.
+We look for rows in w2 where recordDate = 2015-01-04 - 1 day = 2015-01-03.
+We find a match: (id = 3, recordDate = 2015-01-03, temperature = 20).
+Pair formed: (w1.id = 4, w1.recordDate = 2015-01-04, w1.temperature = 30, w2.id = 3, w2.recordDate = 2015-01-03, w2.temperature = 20).
+Summary of Generated Pairs
+The self-join and DATEDIFF condition generate pairs as follows:
+
+For recordDate = 2015-01-02 in w1, the previous day 2015-01-01 is in w2.
+For recordDate = 2015-01-03 in w1, the previous day 2015-01-02 is in w2.
+For recordDate = 2015-01-04 in w1, the previous day 2015-01-03 is in w2.
+These pairs are then filtered based on the temperature condition w1.temperature > w2.temperature to identify dates with rising temperatures.
+
+I'm not able to understand why this condition works?
+w1.temperature > w2.temperature;
+If you reverse it, its not working
+w2.temperature > w1.temperature;
+
+Now, we need to check whether the temperature of the current day (w1.temperature) is greater than the temperature of the previous day (w2.temperature):
+
+For the pair (id = 2, date = 2015-01-02, temp = 25) and (id = 1, date = 2015-01-01, temp = 10), the condition w1.temperature > w2.temperature translates to 25 > 10, which is true.
+For the pair (id = 3, date = 2015-01-03, temp = 20) and (id = 2, date = 2015-01-02, temp = 25), the condition w1.temperature > w2.temperature translates to 20 > 25, which is false.
+For the pair (id = 4, date = 2015-01-04, temp = 30) and (id = 3, date = 2015-01-03, temp = 20), the condition w1.temperature > w2.temperature translates to 30 > 20, which is true.
+
+
 Sol:
 select w1.id from weather w1 , weather w2
 where DATEDIFF(w1.recordDate, w2.recordDate) = 1 and w1.temperature>w2.temperature;
+
+===============================================================================================================================================================================================================================
