@@ -411,3 +411,223 @@ select w1.id from weather w1 , weather w2
 where DATEDIFF(w1.recordDate, w2.recordDate) = 1 and w1.temperature>w2.temperature;
 
 ===============================================================================================================================================================================================================================
+Ques: Loan Types
+
+Table: Loans
+
++-------------+---------+
+| Column Name | Type    |
++-------------+---------+
+| loan_id     | int     |
+| user_id     | int     |
+| loan_type   | varchar |
++-------------+---------+
+loan_id is column of unique values for this table.
+This table contains loan_id, user_id, and loan_type.
+Write a solution to find all distinct user_id's that have at least one Refinance loan type and at least one Mortgage loan type.
+
+Return the result table ordered by user_id in ascending order.
+
+The result format is in the following example.
+
+
+
+Example 1:
+
+Input:
+Loans table:
++---------+---------+-----------+
+| loan_id | user_id | loan_type |
++---------+---------+-----------+
+| 683     | 101     | Mortgage  |
+| 218     | 101     | AutoLoan  |
+| 802     | 101     | Inschool  |
+| 593     | 102     | Mortgage  |
+| 138     | 102     | Refinance |
+| 294     | 102     | Inschool  |
+| 308     | 103     | Refinance |
+| 389     | 104     | Mortgage  |
++---------+---------+-----------+
+Output
++---------+
+| user_id |
++---------+
+| 102     |
++---------+
+Explanation
+- User_id 101 has three loan types, one of which is a Mortgage. However, this user does not have any loan type categorized as Refinance, so user_id 101 won't be considered.
+- User_id 102 possesses three loan types: one for Mortgage and one for Refinance. Hence, user_id 102 will be included in the result.
+- User_id 103 has a loan type of Refinance but lacks a Mortgage loan type, so user_id 103 won't be considered.
+- User_id 104 has a Mortgage loan type but doesn't have a Refinance loan type, thus, user_id 104 won't be considered.
+Output table is ordered by user_id in ascending order.
+
+ChatGPT:
+COUNT(CASE WHEN loan_type = 'Refinance' THEN 1 END) >= 1:
+
+This part of the expression counts the occurrences of 'Refinance' loan types for each user_id.
+The CASE statement checks each row to see if the loan_type is 'Refinance'. If it is, it returns 1; otherwise, it returns NULL.
+The COUNT function then counts the number of non-null values returned by the CASE statement, effectively counting the occurrences of 'Refinance' loan types for each user.
+COUNT(...) >= 1 ensures that there is at least one occurrence of 'Refinance' loan type for each user.
+
+
+Sol:
+SELECT user_id
+FROM loans
+GROUP BY user_id
+HAVING COUNT(CASE WHEN loan_type = 'Refinance' THEN 1 END) >= 1
+   AND COUNT(CASE WHEN loan_type = 'Mortgage' THEN 1 END) >= 1
+ORDER BY user_id ASC;
+
+===============================================================================================================================================================================================================================
+
+Ques:Find Expensive cities
+
+Table: Listings
+
++-------------+---------+
+| Column Name | Type    |
++-------------+---------+
+| listing_id  | int     |
+| city        | varchar |
+| price       | int     |
++-------------+---------+
+listing_id is column of unique values for this table.
+This table contains listing_id, city, and price.
+Write a solution to find cities where the average home prices exceed the national average home price.
+
+Return the result table sorted by city in ascending order.
+
+The result format is in the following example.
+
+
+
+Example 1:
+
+Input:
+Listings table:
++------------+--------------+---------+
+| listing_id | city         | price   |
++------------+--------------+---------+
+| 113        | LosAngeles   | 7560386 |
+| 136        | SanFrancisco | 2380268 |
+| 92         | Chicago      | 9833209 |
+| 60         | Chicago      | 5147582 |
+| 8          | Chicago      | 5274441 |
+| 79         | SanFrancisco | 8372065 |
+| 37         | Chicago      | 7939595 |
+| 53         | LosAngeles   | 4965123 |
+| 178        | SanFrancisco | 999207  |
+| 51         | NewYork      | 5951718 |
+| 121        | NewYork      | 2893760 |
++------------+--------------+---------+
+Output
++------------+
+| city       |
++------------+
+| Chicago    |
+| LosAngeles |
++------------+
+Explanation
+The national average home price is $6,122,059.45. Among the cities listed:
+- Chicago has an average price of $7,048,706.75
+- Los Angeles has an average price of $6,277,754.5
+- San Francisco has an average price of $3,900,513.33
+- New York has an average price of $4,422,739
+Only Chicago and Los Angeles have average home prices exceeding the national average. Therefore, these two cities are included in the output table. The output table is sorted in ascending order based on the city names.
+
+Sol:
+WITH cte AS (
+    SELECT city, AVG(price) AS avg_price
+    FROM Listings
+    GROUP BY city
+    HAVING avg_price > (SELECT AVG(price) FROM Listings)
+    ORDER BY city ASC
+)
+SELECT city
+FROM cte;
+
+===============================================================================================================================================================================================================================
+
+Ques: Total Distance Travelled
+
+Table: Users
+
++-------------+---------+
+| Column Name | Type    |
++-------------+---------+
+| user_id     | int     |
+| name        | varchar |
++-------------+---------+
+user_id is the column with unique values for this table.
+Each row of this table contains user id and name.
+Table: Rides
+
++--------------+------+
+| Column Name  | Type |
++--------------+------+
+| ride_id      | int  |
+| user_id      | int  |
+| distance     | int  |
++--------------+------+
+ride_id is the column of unique values for this table.
+Each row of this table contains ride id, user id, and traveled distance.
+Write a solution to calculate the distance traveled by each user. If there is a user who hasn't completed any rides, then their distance should be considered as 0. Output the user_id, name and total traveled distance.
+
+Return the result table ordered by user_id in ascending order.
+
+The result format is in the following example.
+
+
+
+Example 1:
+
+Input:
+Users table:
++---------+---------+
+| user_id | name    |
++---------+---------+
+| 17      | Addison |
+| 14      | Ethan   |
+| 4       | Michael |
+| 2       | Avery   |
+| 10      | Eleanor |
++---------+---------+
+Rides table:
++---------+---------+----------+
+| ride_id | user_id | distance |
++---------+---------+----------+
+| 72      | 17      | 160      |
+| 42      | 14      | 161      |
+| 45      | 4       | 59       |
+| 32      | 2       | 197      |
+| 15      | 4       | 357      |
+| 56      | 2       | 196      |
+| 10      | 14      | 25       |
++---------+---------+----------+
+Output:
++---------+---------+-------------------+
+| user_id | name    | traveled distance |
++---------+---------+-------------------+
+| 2       | Avery   | 393               |
+| 4       | Michael | 416               |
+| 10      | Eleanor | 0                 |
+| 14      | Ethan   | 186               |
+| 17      | Addison | 160               |
++---------+---------+-------------------+
+Explanation:
+-  User id 2 completed two journeys of 197 and 196, resulting in a combined travel distance of 393.
+-  User id 4 completed two journeys of 59 and 357, resulting in a combined travel distance of 416.
+-  User id 14 completed two journeys of 161 and 25, resulting in a combined travel distance of 186.
+-  User id 16 completed only one journey of 160.
+-  User id 10 did not complete any journeys, thus the total travel distance remains at 0.
+Returning the table orderd by user_id in ascending order.
+
+ChatGPT:
+The COALESCE function is used to handle NULL values, ensuring that traveled distance is 0 if there are no rides for a user.
+
+Sol:
+select u.user_id, name, COALESCE(gp.sum_dist,0) as "traveled distance"  from users u left join (select r.user_id, sum(distance) as sum_dist from rides r group by r.user_id) gp on
+u.user_id = gp.user_id
+order by user_id asc;
+
+===============================================================================================================================================================================================================================
