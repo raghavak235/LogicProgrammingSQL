@@ -631,3 +631,192 @@ u.user_id = gp.user_id
 order by user_id asc;
 
 ===============================================================================================================================================================================================================================
+
+Ques: Concatenate the Name and the Profession
+
+Table: Person
+
++-------------+---------+
+| Column Name | Type    |
++-------------+---------+
+| person_id   | int     |
+| name        | varchar |
+| profession  | ENUM    |
++-------------+---------+
+person_id is the primary key (column with a unique value) for this table.
+Each row in this table contains a person's ID, name, and profession.
+The profession column in an enum of the type ('Doctor', 'Singer', 'Actor', 'Player', 'Engineer', or 'Lawyer')
+
+
+Write a solution to report each person's name followed by the first letter of their profession enclosed in parentheses.
+
+Return the result table ordered by person_id in descending order.
+
+The result format is shown in the following example.
+
+
+
+Example 1:
+
+Input:
+Person table:
++-----------+-------+------------+
+| person_id | name  | profession |
++-----------+-------+------------+
+| 1         | Alex  | Singer     |
+| 3         | Alice | Actor      |
+| 2         | Bob   | Player     |
+| 4         | Messi | Doctor     |
+| 6         | Tyson | Engineer   |
+| 5         | Meir  | Lawyer     |
++-----------+-------+------------+
+Output:
++-----------+----------+
+| person_id | name     |
++-----------+----------+
+| 6         | Tyson(E) |
+| 5         | Meir(L)  |
+| 4         | Messi(D) |
+| 3         | Alice(A) |
+| 2         | Bob(P)   |
+| 1         | Alex(S)  |
++-----------+----------+
+Explanation: Note that there should not be any white space between the name and the first letter of the profession.
+
+
+ChatGPT:
+In MySQL, the SUBSTRING function is used to extract a substring from a string. The parameters for SUBSTRING are:
+
+The string to extract from.
+The starting position (1-based index).
+The length of the substring.
+To get the first letter of the profession column, you need to start from position 1 and extract 1 character. Therefore, the correct usage of SUBSTRING in this context is:
+
+SUBSTRING(profession, 1, 1)
+
+In MySQL, the CONCAT function is used to concatenate multiple strings into one. The parameters for CONCAT are the strings you want to concatenate, separated by commas.
+
+Here’s the corrected query that formats each person's name followed by the first letter of their profession enclosed in parentheses, and orders the results by person_id in descending order:
+
+
+Sol:
+select person_id, concat(name, '(',substring(profession,1,1),')' ) as name from person
+order by person_id desc
+
+===============================================================================================================================================================================================================================
+
+Prob: All the matches of the league
+
+Table: Teams
+
++-------------+---------+
+| Column Name | Type    |
++-------------+---------+
+| team_name   | varchar |
++-------------+---------+
+team_name is the column with unique values of this table.
+Each row of this table shows the name of a team.
+
+
+Write a solution to report all the possible matches of the league. Note that every two teams play two matches with each other, with one team being the home_team once and the other time being the away_team.
+
+Return the result table in any order.
+
+The result format is in the following example.
+
+
+
+Example 1:
+
+Input:
+Teams table:
++-------------+
+| team_name   |
++-------------+
+| Leetcode FC |
+| Ahly SC     |
+| Real Madrid |
++-------------+
+Output:
++-------------+-------------+
+| home_team   | away_team   |
++-------------+-------------+
+| Real Madrid | Leetcode FC |
+| Real Madrid | Ahly SC     |
+| Leetcode FC | Real Madrid |
+| Leetcode FC | Ahly SC     |
+| Ahly SC     | Real Madrid |
+| Ahly SC     | Leetcode FC |
++-------------+-------------+
+Explanation: All the matches of the league are shown in the table.
+
+Sol:
+select a.team_name as home_team,b.team_name as away_team
+
+from teams a
+cross join teams b
+on a.team_name != b.team_name
+
+===============================================================================================================================================================================================================================
+
+Ques: Sort the Olympic Table
+
+Table: Olympic
+
++---------------+---------+
+| Column Name   | Type    |
++---------------+---------+
+| country       | varchar |
+| gold_medals   | int     |
+| silver_medals | int     |
+| bronze_medals | int     |
++---------------+---------+
+In SQL, country is the primary key for this table.
+Each row in this table shows a country name and the number of gold, silver, and bronze medals it won in the Olympic games.
+
+
+The Olympic table is sorted according to the following rules:
+
+The country with more gold medals comes first.
+If there is a tie in the gold medals, the country with more silver medals comes first.
+If there is a tie in the silver medals, the country with more bronze medals comes first.
+If there is a tie in the bronze medals, the countries with the tie are sorted in ascending order lexicographically.
+Write a solution to sort the Olympic table.
+
+The result format is shown in the following example.
+
+
+
+Example 1:
+
+Input:
+Olympic table:
++-------------+-------------+---------------+---------------+
+| country     | gold_medals | silver_medals | bronze_medals |
++-------------+-------------+---------------+---------------+
+| China       | 10          | 10            | 20            |
+| South Sudan | 0           | 0             | 1             |
+| USA         | 10          | 10            | 20            |
+| Israel      | 2           | 2             | 3             |
+| Egypt       | 2           | 2             | 2             |
++-------------+-------------+---------------+---------------+
+Output:
++-------------+-------------+---------------+---------------+
+| country     | gold_medals | silver_medals | bronze_medals |
++-------------+-------------+---------------+---------------+
+| China       | 10          | 10            | 20            |
+| USA         | 10          | 10            | 20            |
+| Israel      | 2           | 2             | 3             |
+| Egypt       | 2           | 2             | 2             |
+| South Sudan | 0           | 0             | 1             |
++-------------+-------------+---------------+---------------+
+Explanation:
+The tie between China and USA is broken by their lexicographical names. Since "China" is lexicographically smaller than "USA", it comes first.
+Israel comes before Egypt because it has more bronze medals.
+
+
+Sol:
+select country, gold_medals,silver_medals,bronze_medals from olympic
+order by gold_medals desc,silver_medals desc,bronze_medals desc, country asc
+
+===============================================================================================================================================================================================================================
