@@ -1392,3 +1392,155 @@ WHERE a.customer_id IS NULL
 
 ================================================================================================================================================================================================================================================
 
+Ques: Immediate Food Delivery I
+
+Table: Delivery
+
++-----------------------------+---------+
+| Column Name                 | Type    |
++-----------------------------+---------+
+| delivery_id                 | int     |
+| customer_id                 | int     |
+| order_date                  | date    |
+| customer_pref_delivery_date | date    |
++-----------------------------+---------+
+delivery_id is the primary key (column with unique values) of this table.
+The table holds information about food delivery to customers that make orders at some date and specify a preferred delivery date (on the same order date or after it).
+
+
+If the customer's preferred delivery date is the same as the order date, then the order is called immediate; otherwise, it is called scheduled.
+
+Write a solution to find the percentage of immediate orders in the table, rounded to 2 decimal places.
+
+The result format is in the following example.
+
+
+
+Example 1:
+
+Input:
+Delivery table:
++-------------+-------------+------------+-----------------------------+
+| delivery_id | customer_id | order_date | customer_pref_delivery_date |
++-------------+-------------+------------+-----------------------------+
+| 1           | 1           | 2019-08-01 | 2019-08-02                  |
+| 2           | 5           | 2019-08-02 | 2019-08-02                  |
+| 3           | 1           | 2019-08-11 | 2019-08-11                  |
+| 4           | 3           | 2019-08-24 | 2019-08-26                  |
+| 5           | 4           | 2019-08-21 | 2019-08-22                  |
+| 6           | 2           | 2019-08-11 | 2019-08-13                  |
++-------------+-------------+------------+-----------------------------+
+Output:
++----------------------+
+| immediate_percentage |
++----------------------+
+| 33.33                |
++----------------------+
+Explanation: The orders with delivery id 2 and 3 are immediate while the others are scheduled.
+
+
+Sol:
+
+# Write your MySQL query statement below
+select round(count(delivery_id)/(select count(*) from delivery)*100,2) as immediate_percentage from delivery where order_date = customer_pref_delivery_date;
+
+
+=============================================================================================================================================================================================================
+
+Ques:
+User Activity for the Past 30 Days I
+Solved
+Easy
+Topics
+Companies
+SQL Schema
+Pandas Schema
+Table: Activity
+
++---------------+---------+
+| Column Name   | Type    |
++---------------+---------+
+| user_id       | int     |
+| session_id    | int     |
+| activity_date | date    |
+| activity_type | enum    |
++---------------+---------+
+This table may have duplicate rows.
+The activity_type column is an ENUM (category) of type ('open_session', 'end_session', 'scroll_down', 'send_message').
+The table shows the user activities for a social media website.
+Note that each session belongs to exactly one user.
+
+
+Write a solution to find the daily active user count for a period of 30 days ending 2019-07-27 inclusively. A user was active on someday if they made at least one activity on that day.
+
+Return the result table in any order.
+
+The result format is in the following example.
+
+
+
+Example 1:
+
+Input:
+Activity table:
++---------+------------+---------------+---------------+
+| user_id | session_id | activity_date | activity_type |
++---------+------------+---------------+---------------+
+| 1       | 1          | 2019-07-20    | open_session  |
+| 1       | 1          | 2019-07-20    | scroll_down   |
+| 1       | 1          | 2019-07-20    | end_session   |
+| 2       | 4          | 2019-07-20    | open_session  |
+| 2       | 4          | 2019-07-21    | send_message  |
+| 2       | 4          | 2019-07-21    | end_session   |
+| 3       | 2          | 2019-07-21    | open_session  |
+| 3       | 2          | 2019-07-21    | send_message  |
+| 3       | 2          | 2019-07-21    | end_session   |
+| 4       | 3          | 2019-06-25    | open_session  |
+| 4       | 3          | 2019-06-25    | end_session   |
++---------+------------+---------------+---------------+
+Output:
++------------+--------------+
+| day        | active_users |
++------------+--------------+
+| 2019-07-20 | 2            |
+| 2019-07-21 | 2            |
++------------+--------------+
+Explanation: Note that we do not care about days with zero active users.
+
+
+ChatGPT:
+The use of 29 days is intended to cover the past 30 days including the end date itself. This can be a bit confusing at first glance. Let’s break it down:
+
+DATE_SUB('2019-07-27', INTERVAL 29 DAY) calculates the date 29 days before '2019-07-27', which is '2019-06-28'.
+The range BETWEEN '2019-06-28' AND '2019-07-27' includes both '2019-06-28' and '2019-07-27', covering a total of 30 days.
+So, the interval of 29 days is correct for including the day '2019-07-27' and the 29 days before it, resulting in a total span of 30 days.
+
+To further clarify:
+
+Day 0: '2019-07-27'
+Day 1: '2019-07-26'
+...
+Day 29: '2019-06-28'
+
+Other Queries:
+SELECT activity_date AS day,
+       COUNT(DISTINCT user_id) AS active_users
+FROM Activity
+WHERE activity_date BETWEEN DATE_SUB('2019-07-27', INTERVAL 29 DAY) AND '2019-07-27'
+GROUP BY activity_date;
+
+SELECT activity_date AS day,
+       COUNT(DISTINCT user_id) AS active_users
+FROM Activity
+WHERE activity_date BETWEEN '2019-06-28' AND '2019-07-27'
+GROUP BY activity_date;
+
+Sol:
+
+select activity_date as day,
+COUNT(DISTINCT user_id) as active_users
+from activity
+where activity_date BETWEEN DATE_ADD('2019-07-27', INTERVAL -29 DAY) AND '2019-07-27'
+group by activity_date
+
+==========================================================================================================================================================================================================
