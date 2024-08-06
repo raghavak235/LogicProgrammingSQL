@@ -2220,3 +2220,116 @@ ORDER BY
 
 ===============================================================================================================================================================================================================================================
 
+Que:
+
+Table: Days
+
++-------------+------+
+| Column Name | Type |
++-------------+------+
+| day         | date |
++-------------+------+
+day is the column with unique values for this table.
+
+
+Write a solution to convert each date in Days into a string formatted as "day_name, month_name day, year".
+
+Return the result table in any order.
+
+The result format is in the following example.
+
+
+
+Example 1:
+
+Input:
+Days table:
++------------+
+| day        |
++------------+
+| 2022-04-12 |
+| 2021-08-09 |
+| 2020-06-26 |
++------------+
+Output:
++-------------------------+
+| day                     |
++-------------------------+
+| Tuesday, April 12, 2022 |
+| Monday, August 9, 2021  |
+| Friday, June 26, 2020   |
++-------------------------+
+Explanation: Please note that the output is case-sensitive.
+
+ChatGPT:
+
+Here's a breakdown of the format string used:
+
+%W - Full name of the weekday (e.g., Monday)
+%M - Full name of the month (e.g., August)
+%e - Day of the month, numeric (e.g., 5 for 5th day)
+%Y - Four-digit year (e.g., 2024)
+
+
+Sol:
+
+# Write your MySQL query statement below
+select date_format(day, '%W, %M %e, %Y') as day from days
+
+===============================================================================================================================================================================================================================================
+
+Ques:
+
+Product's Worth Over Invoices
+
+Table: Product
+
++-------------+---------+
+| Column Name | Type    |
++-------------+---------+
+| product_id  | int     |
+| name        | varchar |
++-------------+---------+
+product_id is the column with unique values for this table.
+This table contains the ID and the name of the product. The name consists of only lowercase English letters. No two products have the same name.
+
+
+Table: Invoice
+
++-------------+------+
+| Column Name | Type |
++-------------+------+
+| invoice_id  | int  |
+| product_id  | int  |
+| rest        | int  |
+| paid        | int  |
+| canceled    | int  |
+| refunded    | int  |
++-------------+------+
+invoice_id is the column with unique values for this table and the id of this invoice.
+product_id is the id of the product for this invoice.
+rest is the amount left to pay for this invoice.
+paid is the amount paid for this invoice.
+canceled is the amount canceled for this invoice.
+refunded is the amount refunded for this invoice.
+
+
+Write a solution that will, for all products, return each product name with the total amount due, paid, canceled, and refunded across all invoices.
+
+Return the result table ordered by product_name.
+
+The result format is in the following example.
+
+
+Sol:
+
+# Write your MySQL query statement below
+
+select name, ifnull(sum(rest),0) as rest, ifnull(sum(paid),0) as paid,
+ifnull(sum(canceled),0) as canceled, ifnull(sum(refunded),0) as refunded
+from invoice i right join product p
+on p.product_id = i.product_id
+group by name
+
+===============================================================================================================================================================================================================================================
+
